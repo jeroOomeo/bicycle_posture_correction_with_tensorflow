@@ -1,0 +1,283 @@
+<LandingPage>:
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: 200
+        spacing: 15
+
+        Image:
+            id: logo
+            width: 200
+            height: 200
+            size_hint_x: None
+            source: "images/res/LOGO.png"
+            pos_hint: {"center_x": 0.5 , "center_y": 0.5}
+
+        MDRoundFlatButton:
+            text: "Start a Session"
+            pos_hint: {"center_x": 0.5 , "center_y": 0.5}
+            on_press:
+                root.manager.transition.direction = 'left'
+                root.manager.transition.duration = 1
+                root.manager.current = 'CapturePage'
+
+        MDRoundFlatButton:
+            text: "About the App"
+            pos_hint: {"center_x": 0.5 , "center_y": 0.5}
+            on_release:
+                app.root.current = "AboutPage"
+                root.manager.transition.direction = 'right'
+                root.manager.transition.duration = 1
+
+<AboutPage>:
+    Screen:
+        MDCard:
+            size_hint: None, None
+            size: 300,400
+            pos_hint: {"center_x": 0.5, "center_y": 0.55}
+            spacing: 5
+            elevation: 1
+            padding: [20,5,20,5]
+            orientation: "vertical"
+
+            MDLabel:
+                text: "About"
+                font_size: 20
+                font_style: "H3"
+                halign: "center"
+                size_hint_y : None
+                height: self.texture_size[1]
+            MDLabel:
+                id: process
+                text:"This is a bike posture recognizer app developed by Jerome F. Pacomios. This app's main feature is to recognize if the cyclist's posture is correct or incorrect. The app uses TensorFLow's pose estimation model, MoveNet. In correctly classifying the posture of the user, the developer uses C4.5 decision tree algorithm. This app will benefit the cycling community in a way that it corrects user's incorrect posture that can affect their overall comfortability and performance."
+                font_style:"H2"
+                font_size: 16
+                halign: "center"
+
+        MDRoundFlatButton:
+            text: "Back"
+            pos_hint: {"center_x": 0.5, "center_y": 0.2}
+            padding_y: 40
+            on_release:
+                root.manager.transition.direction = 'left'
+                root.manager.transition.duration = 1
+                root.manager.current = "LandingPage"
+
+<CapturePage>:
+    name: "CapturePage"
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: [0,0,0,0]
+        spacing: 0
+        Image:
+            id: vid
+            pos_hint: {"center_x":0.5, "center_y": 0.5}
+        Widget:
+            size_hint_y: None
+            height: 110
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: [0,50,0,50]
+            spacing: 15
+            MDBoxLayout:
+                size_hint: None,None
+                orientation: "horizontal"
+                size: root.width * 0.95, 500
+                Widget:
+                    size_hint_x: None
+                    width: 40
+                MDIcon:
+                    pos_hint: {"center_x":0.5, "center_y": 0.2}
+                    icon: "circle-outline"
+                    theme_text_color: "Custom"
+                    text_color: 0,1,1,0.2
+                    font_size: 120
+                Widget:
+                    size_hint_x: None
+                    width: 5
+                MDIcon:
+                    pos_hint: {"center_x":0.5, "center_y": 0.2}
+                    icon: "circle-outline"
+                    theme_text_color: "Custom"
+                    text_color: 0,1,1,0.2
+                    font_size: 120
+
+            MDCard:
+                size_hint: None, None
+                size: root.width * 0.95,200
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                padding: [10,2,10,2]
+                spacing: 2
+                md_bg_color: 0,0,0,0.5
+                elevation: 1
+                orientation: "vertical"
+                MDLabel:
+                    text:"Instructions:"
+                    font_style:"H3"
+                    font_size: 15
+                MDLabel:
+                    id: process
+                    text:"\u2022For a better angle of the body - Align your bicycle's wheels with the two circles on the screen\n\u2022 Press Start to start the timer.\n\u2022 A series of beep will play - make sure to be ready on your bicycle before the beeping stops\n\u2022 You must start pedaling after hearing the voice - 'start pedaling'\n\u2022 You can stop pedaling after hearing the voice - 'stop pedaling'"
+                    font_style:"H2"
+                    font_size: 12
+                Widget:
+                    size_hint_y: None
+                    height: 50
+            MDRoundFlatButton:
+                id: start_btn
+                text: "Start"
+                height: 800
+                pos_hint: {"center_x": 0.5 , "center_y": 0.5}
+                on_press:
+                    app.start_take_pic_thread()
+                size_hint: None,None
+                width: root.width * 0.17
+
+            MDRoundFlatButton:
+                id: process_btn
+                text: "Process"
+                height: 800
+                disabled: True
+                pos_hint: {"center_x": 0.5 , "center_y": 0.5}
+                size_hint: None, None
+                on_press: app.start_show_result_thread()
+                on_release:
+                    app.root.current = "LoadingPage"
+                    root.manager.transition.direction = 'left'
+                    root.manager.transition.duration = 1
+            Widget:
+                size_hint_y: None
+                height: 30
+
+<LoadingPage>
+    name: "LoadingPage"
+    on_enter: self.ids.progress.start()
+    MDFloatLayout:
+        Image:
+            source: "loading.gif"
+            anim_delay: 0.05
+            size_hint: 0.4, 0.3
+            pos_hint: {"center_x": 0.5, "center_y": 0.60}
+
+        MDLabel:
+            pos_hint: {"center_x": 0.5, "center_y": 0.50}
+            text: "Processing ..."
+            font_style: "H2"
+            font_size: 18
+            theme_text_color: "Custom"
+            text_color: 0,0.7,0.7, 0.7
+            halign: "center"
+        MDBoxLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.45}
+            size_hint_x: 0.7
+            MDProgressBar:
+                id: progress
+                orientation: "horizontal"
+                type: "indeterminate"
+                running_duration: 1
+                catching_duration: 1
+                color:  203/255, 195/255, 227/255, 0.9
+
+
+<ResultPage>:
+    name: "ResultPage"
+    MDBoxLayout:
+        orientation: "vertical"
+        padding: [0,5,0,10]
+        spacing: 40
+        Image:
+            id: upper_low
+            pos_hint: {"center_x":0.5, "center_y": 0.5}
+        Image:
+            id: upper_high
+            pos_hint: {"center_x":0.5, "center_y": 0.5}
+        Image:
+            id: lower
+            pos_hint: {"center_x":0.5, "center_y": 0.5}
+
+        MDRoundFlatButton:
+            text: "Start another session"
+            height: 800
+            pos_hint: {"center_x": 0.5 , "center_y": 0.5}
+            size_hint: None, None
+            on_press:  app.restart()
+            on_release:
+                app.root.current = "CapturePage"
+                root.manager.transition.direction = 'right'
+                root.manager.transition.duration = 1
+
+    MDFloatLayout:
+        MDCard:
+            md_bg_color: 1,1,1,0.2
+            size_hint: 0.6, 0.039
+            pos_hint: {'center_x': 0.5, 'center_y': 0.71}
+            padding: [3,0,0,0]
+            MDLabel:
+                text: "Upper body - max angle: "
+                font_style: "H2"
+                font_size: 12
+            MDLabel:
+                id: upper_max_angle
+                text: "45.67 deg"
+                theme_text_color: "Custom"
+                text_color: 0,1,1,0.6
+                font_style: "H6"
+                font_size: 16
+            MDIconButton:
+                id: upper_max_icon
+                icon: "information-outline"
+                theme_text_color: "Custom"
+                text_color: 0,1,1,0.6
+                padding: [15,15,0,0]
+                icon_size: "18sp"
+                on_release: app.upper_max_icon_toast()
+        MDCard:
+            md_bg_color: 1,1,1,0.2
+            size_hint: 0.6, 0.039
+            pos_hint: {'center_x': 0.5, 'center_y': 0.40}
+            padding: [3,0,3,0]
+            MDLabel:
+                text: "Upper body - min angle: "
+                font_style: "H2"
+                font_size: 12
+            MDLabel:
+                id: upper_min_angle
+                text: "45.67 deg"
+                theme_text_color: "Custom"
+                text_color: 0.8,0,0,0.6
+                font_style: "H6"
+                font_size: 16
+
+            MDIconButton:
+                id: upper_min_icon
+                icon: "information-outline"
+                theme_text_color: "Custom"
+                text_color: 0.8,0,0,0.6
+                padding: [15,15,0,0]
+                icon_size: "18sp"
+                on_release: app.upper_min_icon_toast()
+
+        MDCard:
+            md_bg_color: 1,1,1,0.2
+            size_hint: 0.6, 0.039
+            pos_hint: {'center_x': 0.5, 'center_y': 0.09}
+            padding: [3,0,3,0]
+            MDLabel:
+                text: "Lower body - knee angle: "
+                font_style: "H2"
+                font_size: 12
+            MDLabel:
+                id: knee_max_angle
+                text: "45.67 deg"
+                theme_text_color: "Custom"
+                text_color: 0,1,1,0.6
+                font_style: "H6"
+                font_size: 16
+            MDIconButton:
+                id: knee_max_icon
+                icon: "information-outline"
+                theme_text_color: "Custom"
+                text_color: 0,1,1,0.6
+                padding: [15,15,0,0]
+                icon_size: "18sp"
+                on_release: app.knee_max_icon_toast()
+
